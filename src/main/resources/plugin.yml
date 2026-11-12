@@ -1,0 +1,23 @@
+name: BedwarsAC
+version: 1.0.0-RELEASE
+main: me.anticheat.bedwars.BedwarsACPlugin
+authors: [SeniorDev]
+description: Complete Bedwars-focused Anticheat for Spigot/PaperSpigot 1.8.8/1.8.9
+softdepend: [ProtocolLib, BedWars1058, BedWarsProxy]
+
+commands:
+  ac:
+    description: Main BedwarsAC management command
+    aliases: [anticheat, bwac]
+    usage: "/ac <reload|alerts|info|logs|ban|unban|exempt|debug>"
+
+permissions:
+  anticheat.admin:
+    description: Grants access to all BedwarsAC administrative commands
+    default: op
+  anticheat.alerts:
+    description: Grants access to receive and toggle real-time anticheat alerts
+    default: op
+  anticheat.bypass:
+    description: Exempts a player from all anticheat checks
+    default: false

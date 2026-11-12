@@ -1,0 +1,44 @@
+name: Build BedwarsAC Plugin JAR
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Compile, Test & Package JAR (Java 8)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+
+      - name: Set up JDK 8 (Temurin)
+        uses: actions/setup-java@v5
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Build and Install NMS v1_8_R3 & BungeeChat Compile Stubs
+        run: |
+          chmod +x scripts/install-nms-stubs.sh
+          ./scripts/install-nms-stubs.sh
+
+      - name: Run Unit Tests & Package Shaded Plugin JAR
+        run: mvn -B clean test package
+
+      - name: Verify Built JAR Exists
+        run: ls -lh target/BedwarsAC-1.0.0-RELEASE.jar
+
+      - name: Upload Compiled Plugin JAR Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: BedwarsAC-1.0.0-RELEASE-jar
+          path: |
+            target/BedwarsAC-1.0.0-RELEASE.jar
+            src/main/resources/config.yml
+          retention-days: 90

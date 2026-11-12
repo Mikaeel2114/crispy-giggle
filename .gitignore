@@ -1,0 +1,10 @@
+target/
+nms-stubs/target/
+*.iml
+.idea/
+.vscode/
+.settings/
+.classpath
+.project
+dependency-reduced-pom.xml
+*.db

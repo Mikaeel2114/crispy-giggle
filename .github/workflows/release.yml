@@ -1,0 +1,49 @@
+name: Publish GitHub Release JAR
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Release Tag (e.g. v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build & Publish Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+
+      - name: Set up JDK 8 (Temurin)
+        uses: actions/setup-java@v5
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Build and Install NMS v1_8_R3 & BungeeChat Compile Stubs
+        run: |
+          chmod +x scripts/install-nms-stubs.sh
+          ./scripts/install-nms-stubs.sh
+
+      - name: Compile, Test & Package Plugin JAR
+        run: mvn -B clean test package
+
+      - name: Create GitHub Release & Attach JAR
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag_name || github.ref_name }}
+          name: BedwarsAC ${{ github.event.inputs.tag_name || github.ref_name }}
+          generate_release_notes: true
+          files: |
+            target/BedwarsAC-1.0.0-RELEASE.jar
+            src/main/resources/config.yml
